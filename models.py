@@ -29,13 +29,61 @@ def get_events_by_month(month):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     query = """
-        SELECT name, description, event_date, location 
-        FROM Event 
+        SELECT id_event, name, description, event_date, location, openslots
+        FROM Event
         WHERE strftime('%m', event_date) = ?
           AND status = 'active'
     """
     cursor.execute(query, (f"{month:02}",))
     events = cursor.fetchall()
     conn.close()
-    return [{'name': row[0], 'description': row[1], 'date': row[2], 'location': row[3]} for row in events]
+
+    # Include tags for each event
+    return [
+        {
+            'id': row[0],
+            'name': row[1],
+            'description': row[2],
+            'date': row[3],
+            'location': row[4],
+            'openslots': row[5],
+            'tags': get_event_tags(row[0])
+        }
+        for row in events
+    ]
+
+def get_event_tags(event_id):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    query = """
+        SELECT t.name
+        FROM Tag t
+        JOIN Event_Tags et ON t.id_tag = et.id_tag
+        WHERE et.id_event = ?
+    """
+    cursor.execute(query, (event_id,))
+    tags = cursor.fetchall()
+    conn.close()
+    return [tag[0] for tag in tags]
+
+def get_event_by_id(event_id):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    query = """
+        SELECT id_event, name, event_date, openslots 
+        FROM Event
+        WHERE id_event = ?
+    """
+    cursor.execute(query, (event_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row:
+        return None
+    return {
+        'id': row[0],
+        'name': row[1],
+        'date': row[2],
+        'openslots': row[3]
+    }
+
 
