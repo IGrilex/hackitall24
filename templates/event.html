@@ -1,15 +1,58 @@
+<!-- templates/event.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ event.name }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>{{ event.name }}</h1>
     <p><strong>Date:</strong> {{ event.date }}</p>
-    <p><strong>Open Slots:</strong> {{ event.openslots }}</p>
-    <a href="/home/1">Back to Map</a>
+    <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+    <p><strong>Points:</strong> {{ event.points }}</p>
+    <p><strong>Interested People:</strong> {{ event.interested }}</p>
+
+    <form method="POST">
+        {% if enrolled %}
+        <button type="submit" name="action" value="leave" style="background-color: red; color: white;">Leave</button>
+        {% else %}
+        <button type="submit" name="action" value="enroll" style="background-color: green; color: white;">Enroll</button>
+        {% endif %}
+    </form>
+
+    <h2>Event Location</h2>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
+    <h2>Forums</h2>
+    {% if forums %}
+    <ul>
+        {% for forum in forums %}
+        <li><a href="/home/forum/{{ forum.id }}">{{ forum.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No forums available for this event.</p>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const map = L.map('map').setView([44.4268, 26.1025], 13); // Default coordinates
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+            }).addTo(map);
+
+            // Add a marker for the event location
+            {% if location %}
+            const [lat, lng] = "{{ location }}".split(',').map(parseFloat);
+            map.setView([lat, lng], 15); // Center the map on the event location
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("<strong>{{ event.name }}</strong>").openPopup();
+            {% endif %}
+        });
+    </script>
 </body>
 </html>

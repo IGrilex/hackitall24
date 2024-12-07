@@ -1,3 +1,4 @@
+// static/map.js
 let map;
 const monthNames = [
     "January", "February", "March", "April", "May", "June",
