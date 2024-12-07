@@ -1,11 +1,12 @@
+/* static/styles.css */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 20px;
 }
 h1, h2 {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 #map {
     margin: 20px auto;
@@ -33,4 +34,24 @@ h1, h2 {
 }
 .event:last-child {
     border-bottom: none;
+}
+.recommended {
+    background-color: #d4edda; /* Light green background */
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+ul li a {
+    text-decoration: none;
+    color: blue;
+}
+ul li a:hover {
+    text-decoration: underline;
+}
+.success {
+    color: green;
+}
+.error {
+    color: red;
 }

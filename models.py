@@ -25,16 +25,19 @@ def create_user(data):
     conn.commit()
     conn.close()
 
-def get_events_by_month(month):
+def get_events_by_month(month, user_id):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     query = """
-        SELECT e.id_event, e.name, e.description, e.event_date, e.location, e.openslots
+        SELECT e.id_event, e.name, e.description, e.event_date, e.location, e.openslots,
+               CASE WHEN rl.id_event IS NULL THEN 0 ELSE 1 END AS recommended
         FROM Event e
+        LEFT JOIN Recommendations_List rl 
+            ON e.id_event = rl.id_event AND rl.id_user = ?
         WHERE strftime('%m', e.event_date) = ?
           AND e.status = 'active'
     """
-    cursor.execute(query, (f"{month:02}",))
+    cursor.execute(query, (user_id, f"{month:02}",))
     events = cursor.fetchall()
     conn.close()
 
@@ -47,10 +50,12 @@ def get_events_by_month(month):
             'date': row[3],
             'location': row[4],
             'openslots': row[5],
-            'tags': get_event_tags(row[0])
+            'tags': get_event_tags(row[0]),
+            'recommended': bool(row[6])
         }
         for row in events
     ]
+
 
 def get_event_tags(event_id):
     conn = sqlite3.connect(DB_NAME)

@@ -1,13 +1,15 @@
+# routes/home.py
 from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for, flash
 from models import (
-    get_event_location,
     get_events_by_month,
     get_event_details,
+    get_event_location,
     is_user_enrolled,
     enroll_user_in_event,
     remove_user_from_event,
     get_event_forums
 )
+import sqlite3
 
 home_bp = Blueprint('home', __name__, url_prefix='/home')
 
@@ -25,7 +27,7 @@ def get_events():
     if not user_id:
         return jsonify({'error': 'Unauthorized'}), 401
     month = request.args.get('month', type=int)
-    events = get_events_by_month(month)
+    events = get_events_by_month(month, user_id)
     return jsonify(events)
 
 @home_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
@@ -41,6 +43,7 @@ def event_page(event_id):
 
     enrolled = is_user_enrolled(user_id, event_id)
     forums = get_event_forums(event_id)
+    location = get_event_location(event_id)
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -48,23 +51,21 @@ def event_page(event_id):
             try:
                 enroll_user_in_event(user_id, event_id)
                 flash('Successfully enrolled in the event!', 'success')
+                enrolled = True
             except sqlite3.IntegrityError:
                 flash('Error: Unable to enroll in the event.', 'error')
         elif action == 'leave' and enrolled:
             remove_user_from_event(user_id, event_id)
             flash('Successfully left the event.', 'success')
+            enrolled = False
         return redirect(url_for('home.event_page', event_id=event_id))
-
-    # Fetch event location for the map
-    event_location = get_event_location(event_id)
 
     return render_template(
         'event.html',
         event=event,
         enrolled=enrolled,
-        user_id=user_id,
         forums=forums,
-        location=event_location
+        location=location
     )
 
 @home_bp.route('/forum/<int:forum_id>')

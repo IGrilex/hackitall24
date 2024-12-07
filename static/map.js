@@ -19,13 +19,14 @@ function fetchAndDisplayEvents(month) {
     fetch(`/home/events?month=${month}`)
         .then(response => response.json())
         .then(events => {
+            // Remove existing markers
             map.eachLayer(layer => {
                 if (layer.options && layer.options.pane === "markerPane") {
-                    map.removeLayer(layer); // Remove existing markers
+                    map.removeLayer(layer);
                 }
             });
 
-            // Update Map
+            // Add new markers
             events.forEach(event => {
                 const [lat, lng] = event.location.split(',').map(Number);
                 L.marker([lat, lng]).addTo(map)
@@ -58,6 +59,9 @@ function updateEventList(events) {
     events.forEach(event => {
         const eventDiv = document.createElement('div');
         eventDiv.className = "event";
+        if (event.recommended) {
+            eventDiv.classList.add("recommended");
+        }
 
         const tags = event.tags.length > 0 ? event.tags.join(', ') : "No tags";
 
