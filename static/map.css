@@ -1,0 +1,28 @@
+.grid-event-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cards per row */
+    gap: 10px; /* Spacing between cards */
+    padding: 10px; /* Optional: Add padding around the grid */
+    background-color: #f9f9f9; /* Optional: Light background */
+    border-radius: 5px; /* Optional: Rounded corners for the grid container */
+    max-height: 300px; /* Set the height of the scrollable area */
+    overflow-y: auto; /* Enable scrolling when content exceeds max-height */
+}
+
+.event {
+    background-color: #ffffff; /* Default white background */
+    border: 1px solid #ddd; /* Gray border */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1; /* Makes the cards square */
+    border-radius: 5px; /* Rounded corners for the cards */
+    text-align: center; /* Center text alignment */
+    padding: 10px; /* Padding inside each card */
+}
+
+.event.recommended-event {
+    background-color: #d4edda; /* Light green background for recommended events */
+    border: 1px solid #c3e6cb; /* Green border */
+}
