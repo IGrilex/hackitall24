@@ -4,6 +4,7 @@ from models import (
     get_events_by_month,
     get_event_details,
     get_event_location,
+    get_forums_by_event,
     is_user_enrolled,
     enroll_user_in_event,
     remove_user_from_event,
@@ -29,46 +30,27 @@ def get_events():
     month = request.args.get('month', type=int)
     events = get_events_by_month(month, user_id)
     return jsonify(events)
-
-@home_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
+    
+@home_bp.route('/event/<int:event_id>')
 def event_page(event_id):
     user_id = session.get('user_id')
     if not user_id:
-        flash('Please log in to view event details.', 'error')
+        flash('Please log in to view events.', 'error')
         return redirect(url_for('login.login'))
-
+    
     event = get_event_details(event_id)
     if not event:
-        return "Event not found", 404
-
-    enrolled = is_user_enrolled(user_id, event_id)
-    forums = get_event_forums(event_id)
-    location = get_event_location(event_id)
-
-    if request.method == 'POST':
-        action = request.form.get('action')
-        if action == 'enroll' and not enrolled:
-            try:
-                enroll_user_in_event(user_id, event_id)
-                flash('Successfully enrolled in the event!', 'success')
-                enrolled = True
-            except sqlite3.IntegrityError:
-                flash('Error: Unable to enroll in the event.', 'error')
-        elif action == 'leave' and enrolled:
-            remove_user_from_event(user_id, event_id)
-            flash('Successfully left the event.', 'success')
-            enrolled = False
-        return redirect(url_for('home.event_page', event_id=event_id))
-
+        flash('Event not found.', 'error')
+        return redirect(url_for('home.home'))
+    
+    # Fetch forums associated with the event
+    forums = get_forums_by_event(event_id)
+    
+    # Debugging: Print forums data to the console
+    print("Forums Data:", forums)
+    
     return render_template(
         'event.html',
         event=event,
-        enrolled=enrolled,
-        forums=forums,
-        location=location
+        forums=forums
     )
-
-@home_bp.route('/forum/<int:forum_id>')
-def forum_page(forum_id):
-    # Placeholder for forum page implementation
-    return f"Forum Page for Forum ID: {forum_id}"

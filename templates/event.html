@@ -37,15 +37,21 @@
     <h2>Event Location</h2>
     <div id="map" style="height: 400px; width: 100%;"></div>
 
+    <!-- Forums Section -->
     <h2>Forums</h2>
     {% if forums %}
-    <ul>
-        {% for forum in forums %}
-        <li><a href="/home/forum/{{ forum.id }}">{{ forum.name }}</a></li>
-        {% endfor %}
-    </ul>
+        <ul>
+            {% for forum in forums %}
+                <li>
+                    <a href="{{ url_for('forum.forum_page', forum_id=forum.id_forum) }}">
+                        {{ forum.name }}
+                    </a>
+                    <span style="font-size: 0.9em; color: #555;">(Last update: {{ forum.last_update }})</span>
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
-    <p>No forums available for this event.</p>
+        <p>No forums available for this event.</p>
     {% endif %}
 
     <script>
