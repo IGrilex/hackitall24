@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="signup-container" style="max-width: 400px; margin: auto; padding: 15px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h1 class="signup-heading" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 10px; color: #1d1d1f;">Sign Up</h1>
+    <form method="POST" id="signup-form" class="signup-form">
+        <!-- Section 1 -->
+        <div id="section-1" style="display: block;">
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="first_name" class="form-label" style="font-size: 0.85rem;">First Name:</label>
+                <input type="text" id="first_name" name="first_name" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="last_name" class="form-label" style="font-size: 0.85rem;">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="date_of_birth" class="form-label" style="font-size: 0.85rem;">Date of Birth:</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="gender" class="form-label" style="font-size: 0.85rem;">Gender:</label>
+                <select id="gender" name="gender" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                </select>
+            </div>
+            <button type="button" id="next-button" class="signup-button" style="width: 100%; padding: 8px; font-size: 0.9rem; background: #0a84ff; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;">Next</button>
+        </div>
+
+        <!-- Section 2 -->
+        <div id="section-2" style="display: none;">
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="email" class="form-label" style="font-size: 0.85rem;">Email:</label>
+                <input type="email" id="email" name="email" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="university" class="form-label" style="font-size: 0.85rem;">University:</label>
+                <input type="text" id="university" name="university" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label for="bio" class="form-label" style="font-size: 0.85rem;">Bio:</label>
+                <textarea id="bio" name="bio" class="form-input" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;" rows="2"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label for="hobby-input" class="form-label" style="font-size: 0.85rem;">Hobbies:</label>
+                <input type="text" id="hobby-input" class="form-input" placeholder="Add a hobby and press Enter" style="width: 100%; padding: 6px; border: 1px solid #d1d1d6; border-radius: 6px;">
+                <div id="hobby-list" class="hobby-list" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                <input type="hidden" name="hobbies" id="hobbies" value="">
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <button type="button" id="back-button" class="signup-button" style="width: 48%; padding: 8px; font-size: 0.9rem; background: #d1d1d6; color: #1d1d1f; border: none; border-radius: 6px; cursor: pointer;">Back</button>
+                <button type="submit" class="signup-button" style="width: 48%; padding: 8px; font-size: 0.9rem; background: #0a84ff; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;">Sign Up</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Footer -->
+<footer style="margin-top: 20px; text-align: center; font-size: 0.85rem; color: #6e6e73;">
+    © 2024 HackItAll. All Rights Reserved.
+</footer>
+
+<script>
+    const section1 = document.getElementById('section-1');
+    const section2 = document.getElementById('section-2');
+    const nextButton = document.getElementById('next-button');
+    const backButton = document.getElementById('back-button');
+
+    nextButton.addEventListener('click', function () {
+        section1.style.display = 'none';
+        section2.style.display = 'block';
+    });
+
+    backButton.addEventListener('click', function () {
+        section2.style.display = 'none';
+        section1.style.display = 'block';
+    });
+
+    const hobbyInput = document.getElementById('hobby-input');
+    const hobbyList = document.getElementById('hobby-list');
+    const hobbiesInput = document.getElementById('hobbies');
+    let hobbies = [];
+    hobbyInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && hobbyInput.value.trim() !== '') {
+            event.preventDefault();
+            const hobby = hobbyInput.value.trim();
+            if (!hobbies.includes(hobby)) {
+                hobbies.push(hobby);
+                hobbiesInput.value = hobbies.join(',');
+                displayHobbies();
+            }
+            hobbyInput.value = '';
+        }
+    });
+    function displayHobbies() {
+        hobbyList.innerHTML = '';
+        hobbies.forEach((hobby, index) => {
+            const hobbyBadge = document.createElement('span');
+            hobbyBadge.textContent = hobby;
+            hobbyBadge.style.padding = '3px 6px';
+            hobbyBadge.style.background = '#f5f5f7';
+            hobbyBadge.style.border = '1px solid #d1d1d6';
+            hobbyBadge.style.borderRadius = '6px';
+            hobbyBadge.style.marginRight = '5px';
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'X';
+            removeBtn.style.marginLeft = '5px';
+            removeBtn.style.border = 'none';
+            removeBtn.style.background = 'none';
+            removeBtn.style.color = '#ff3b30';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.addEventListener('click', function() {
+                hobbies.splice(index, 1);
+                hobbiesInput.value = hobbies.join(',');
+                displayHobbies();
+            });
+            hobbyBadge.appendChild(removeBtn);
+            hobbyList.appendChild(hobbyBadge);
+        });
+    }
+</script>
+{% endblock %}
