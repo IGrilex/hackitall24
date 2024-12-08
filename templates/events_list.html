@@ -1,0 +1,39 @@
+<!-- templates/events_list.html -->
+{% extends "base.html" %}
+{% block content %}
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+        <input type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="menu-icon">&#9776;</label>
+        <div class="menu">
+            <a href="/home/">Events Map</a>
+            <a href="/events_list/">Events List</a>
+            <a href="/profile/">Profile</a>
+        </div>
+    </div>
+
+    <h1>All Active Events</h1>
+
+    <!-- Filters -->
+    <div class="filters">
+        <input type="text" id="keyword" placeholder="Search by event title">
+        <select id="month">
+            <option value="">All Months</option>
+            {% for m in range(1,13) %}
+                <option value="{{ '%02d' % m }}">{{ m }}</option>
+            {% endfor %}
+        </select>
+        <select id="order">
+            <option value="date">Order by Date</option>
+            <option value="points">Order by Points</option>
+        </select>
+        <button onclick="applyFilters()">Filter</button>
+    </div>
+
+    <!-- Events List -->
+    <div id="eventsList">
+        <p>Loading events...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='events_list.js') }}"></script>
+{% endblock %}

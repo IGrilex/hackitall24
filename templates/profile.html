@@ -1,0 +1,64 @@
+<!-- templates/profile.html -->
+{% extends "base.html" %}
+{% block content %}
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+        <input type="checkbox" id="menu-toggle" />
+        <label for="menu-toggle" class="menu-icon">&#9776;</label>
+        <div class="menu">
+            <a href="/home/">Events Map</a>
+            <a href="/events_list/">Events List</a>
+            <a href="/profile/">Profile</a>
+        </div>
+    </div>
+
+    <h1>Your Profile</h1>
+
+    <div class="profile-container">
+        <!-- User Information -->
+        <h2>Personal Information</h2>
+        <p><strong>First Name:</strong> {{ user.first_name }}</p>
+        <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+        <p><strong>Date of Birth:</strong> {{ user.date_of_birth }}</p>
+        <p><strong>Gender:</strong> {{ user.gender }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>University:</strong> {{ user.university }}</p>
+        <p><strong>Specialization:</strong> {{ user.university_specialization }}</p>
+        <p><strong>Programme:</strong> {{ user.university_programme }}</p>
+        <p><strong>Employed Status:</strong> {{ user.employed_status }}</p>
+        <p><strong>Bio:</strong> {{ user.bio }}</p>
+        <p><strong>Hobbies:</strong> {{ user.hobbies }}</p>
+        
+        <!-- Points and Level -->
+        <h2>Points and Level</h2>
+        <p><strong>Calculated Points (from inactive events):</strong> {{ calculated_points }}</p>
+        <p><strong>Available Points:</strong> {{ available_points }}</p>
+        <p><strong>Total Points (Calculated Points Only):</strong> {{ total_points }}</p>
+        <p><strong>User Level:</strong> Level {{ level }}</p>
+        
+        <!-- Download Certificate Button -->
+        <div style="margin-top: 30px;">
+            <a href="{{ url_for('profile.download_certificate') }}" class="button enroll">Download Certificate</a>
+        </div>
+        
+        <!-- Leaderboard -->
+        <h2>Leaderboard</h2>
+        <div class="leaderboard">
+            {% if leaderboard.first_user %}
+                <div class="leaderboard-entry">
+                    <p><strong>Top Leader:</strong> {{ leaderboard.first_user.first_name }} {{ leaderboard.first_user.last_name }} - {{ leaderboard.first_user.total_points }} points</p>
+                </div>
+            {% endif %}
+            <hr>
+            <div class="leaderboard-entry">
+                {% if leaderboard.before_user %}
+                    <p><strong>Above You:</strong> {{ leaderboard.before_user.first_name }} {{ leaderboard.before_user.last_name }} - {{ leaderboard.before_user.total_points }} points</p>
+                {% endif %}
+                <p><strong>You:</strong> {{ leaderboard.current_user.first_name }} {{ leaderboard.current_user.last_name }} - {{ leaderboard.current_user.total_points }} points</p>
+                {% if leaderboard.after_user %}
+                    <p><strong>Below You:</strong> {{ leaderboard.after_user.first_name }} {{ leaderboard.after_user.last_name }} - {{ leaderboard.after_user.total_points }} points</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
