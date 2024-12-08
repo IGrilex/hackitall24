@@ -10,7 +10,7 @@ def login():
         email = request.form.get('email')
         user = get_user_by_email(email)
         if user:
-            session['user_id'] = user[0]  # Assuming id_user is the first column
+            session['user_id'] = user['id_user']
             return redirect(url_for('home.home'))
         else:
             flash('Error: Email not found!', 'error')
